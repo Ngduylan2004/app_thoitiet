@@ -21,7 +21,7 @@ class DetailPage extends StatelessWidget {
               ),
             ),
             child: AppBar(
-              title: const Text('Hello world'),
+              title: const Text('việt nam'),
               backgroundColor: Colors.transparent, //No more green
               elevation: 0.0,
             ),
