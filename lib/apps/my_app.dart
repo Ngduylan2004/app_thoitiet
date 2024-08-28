@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => WheatherProvider(),
       child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
         // home: HomePage(),
         home: BottomCustom(),
       ),
