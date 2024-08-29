@@ -16,7 +16,24 @@ class ApiRepository {
       DataWheater result = DataWheater.fromMap(data);
       return result;
     } catch (e) {
-      print(e);
+      rethrow;
+    }
+  }
+
+// trả về 1 list các detail
+  static Future<List<WheatherDetail>> callApiGetWheatherDetail() async {
+    try {
+      final dio = Dio();
+      final res = await dio.get(
+          'https://api.openweathermap.org/data/2.5/forecast?lat=10.7318&lon=106.5528&units=metric&appid=${MyKey.api_token}');
+
+      // Truy cập trường đúng trong dữ liệu trả về từ API
+      List data = res.data['list'];
+      List<WheatherDetail> result = List.from(
+          data.map<WheatherDetail>((e) => WheatherDetail.fromMap(e)).toList());
+
+      return result;
+    } catch (e) {
       rethrow;
     }
   }

@@ -8,4 +8,15 @@ class WheatherProvider extends ChangeNotifier {
     DataWheater result = await ApiRepository.callApiGetWheather();
     return result;
   }
+
+  Future<List<WheatherDetail>> getWheatherCurrentDetail() async {
+    try {
+      final result = await ApiRepository.callApiGetWheatherDetail();
+      print(result); // Kiểm tra dữ liệu
+      return result;
+    } catch (e) {
+      print(e); // In lỗi nếu có
+      return [];
+    }
+  }
 }
