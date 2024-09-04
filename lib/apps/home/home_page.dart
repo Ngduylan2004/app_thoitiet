@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 HomeWheatherIcon(nameIcon: weatherIconName),
                 // ch hiểu lắm
                 HomeRow1(temp: data.main.temp),
-                const HomeLoaction(),
+                HomeLoaction(cityName: data.name),
                 const SizedBox(height: 30),
                 HomeTemperature(
                   wind: data.wind.speed,

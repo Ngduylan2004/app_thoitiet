@@ -20,7 +20,7 @@ class _BottomCustomState extends State<BottomCustom> {
   ];
   List<Widget> listPage = [
     const HomePage(),
-    const DetailPage(),
+    DetailPage(),
   ];
   int active = 0;
   @override

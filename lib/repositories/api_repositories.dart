@@ -1,15 +1,16 @@
 import 'package:app_thoitiet/apps/model/data_wheather.dart';
 import 'package:app_thoitiet/apps/utils/const.dart';
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ApiRepository {
   // call api
   // gọi k cần phải khởi tạo dùng static
-  static Future<DataWheater> callApiGetWheather() async {
+  static Future<DataWheater> callApiGetWheather(Position? position) async {
     try {
       final dio = Dio();
       final res = await dio.get(
-          'https://api.openweathermap.org/data/2.5/weather?lat=10.7318&lon=106.5528&units=metric&appid=${MyKey.api_token}');
+          'https://api.openweathermap.org/data/2.5/weather?lat=${position?.latitude}&lon=${position?.longitude}&units=metric&appid=${MyKey.api_token}');
 
       // chuyển đổi data map thành đối tượng
       final data = res.data;
@@ -21,11 +22,12 @@ class ApiRepository {
   }
 
 // trả về 1 list các detail
-  static Future<List<WheatherDetail>> callApiGetWheatherDetail() async {
+  static Future<List<WheatherDetail>> callApiGetWheatherDetail(
+      Position? position) async {
     try {
       final dio = Dio();
       final res = await dio.get(
-          'https://api.openweathermap.org/data/2.5/forecast?lat=10.7318&lon=106.5528&units=metric&appid=${MyKey.api_token}');
+          'https://api.openweathermap.org/data/2.5/forecast?lat=${position?.latitude}&lon=${position?.longitude}&units=metric&appid=${MyKey.api_token}');
 
       // Truy cập trường đúng trong dữ liệu trả về từ API
       List data = res.data['list'];

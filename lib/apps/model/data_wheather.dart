@@ -80,10 +80,10 @@ class Main {
 
   factory Main.fromMap(Map<String, dynamic> map) {
     return Main(
-      temp: map['temp'],
+      temp: (map['temp'] as num).toDouble(),
       pressure: map['pressure'],
       humidity: map['humidity'],
-      feelsLike: map['feels_like'],
+      feelsLike: (map['feels_like'] as num).toDouble(),
     );
   }
 
@@ -135,7 +135,7 @@ class Wind {
 
   factory Wind.fromMap(Map<String, dynamic> map) {
     return Wind(
-      speed: map['speed'],
+      speed: (map['speed'] as num).toDouble(),
       deg: map['deg'],
     );
   }
