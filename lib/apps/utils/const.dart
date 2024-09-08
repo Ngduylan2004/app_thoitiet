@@ -6,5 +6,5 @@ class AssetsCustom {
 }
 
 class MyKey {
-  static const String api_token = 'f1608d57b6d354e504290452bbd2768f';
+  static const String apiToken = 'f1608d57b6d354e504290452bbd2768f';
 }

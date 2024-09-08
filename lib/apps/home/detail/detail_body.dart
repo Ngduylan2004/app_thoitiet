@@ -3,18 +3,26 @@ import 'package:app_thoitiet/apps/utils/const.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DetailBody extends StatelessWidget {
+class DetailBody extends StatefulWidget {
   final List<WheatherDetail> listData;
 
   const DetailBody({super.key, required this.listData});
 
   @override
+  State<DetailBody> createState() => _DetailBodyState();
+}
+
+class _DetailBodyState extends State<DetailBody> {
+  @override
   Widget build(BuildContext context) {
     final now = DateTime.now(); // Thời gian hiện tại
-    final filteredListData = listData.where((weatherDetail) {
+    final filteredListData = widget.listData.where((weatherDetail) {
       final dateTime = DateTime.parse(weatherDetail.dtTxt);
       return dateTime.isAfter(now);
     }).toList();
+
+    print(
+        'Filtered list data in DetailBody: $filteredListData'); // In dữ liệu đã lọc
 
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -27,17 +35,11 @@ class DetailBody extends StatelessWidget {
           final dateTimeString = weatherDetail.dtTxt;
 
           final dateTime = DateTime.parse(dateTimeString);
-
           final date = DateFormat('EEEE').format(dateTime);
-          final time =
-              DateFormat('HH:mm').format(dateTime); // Thời gian từ dữ liệu
-
-          final currentTime =
-              DateFormat('HH:mm').format(now); // Thời gian hiện tại
-          print('Current Time: $currentTime');
-          print('Weather Time: $time');
+          final time = DateFormat('HH:mm').format(dateTime);
 
           return Container(
+            key: ValueKey(weatherDetail.main.temp),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white30,
@@ -95,8 +97,8 @@ class DetailBody extends StatelessWidget {
                 SizedBox(
                     width: MediaQuery.sizeOf(context).width / 4,
                     child: Image.asset(
-                      AssetsCustom.getLinkImg(weatherDetail.dataWheater
-                          .weather), // Đảm bảo đường dẫn hình ảnh đúng
+                      AssetsCustom.getLinkImg(
+                          weatherDetail.dataWheater.weather),
                     ))
               ],
             ),

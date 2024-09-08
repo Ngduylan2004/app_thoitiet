@@ -18,10 +18,8 @@ class _BottomCustomState extends State<BottomCustom> {
     const BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.list_bullet), label: 'list'),
   ];
-  List<Widget> listPage = [
-    const HomePage(),
-    DetailPage(),
-  ];
+  late final PageController controller;
+
   int active = 0;
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,13 @@ class _BottomCustomState extends State<BottomCustom> {
       // làm cho hòa quyện màu với body
       extendBody: true,
 
-      body: listPage[active],
+      body: PageView(
+        controller: controller,
+        children: const [
+          HomePage(),
+          DetailPage(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white12,
         selectedItemColor: Colors.white,
@@ -40,10 +44,21 @@ class _BottomCustomState extends State<BottomCustom> {
         onTap: (index) {
           setState(() {
             active = index;
+            controller.jumpToPage(index);
           });
         },
         items: listItem,
       ),
     );
+  }
+
+  @override
+  void initState() {
+    controller = PageController();
+    super.initState();
+
+    controller.addListener(() {
+      setState(() {});
+    });
   }
 }

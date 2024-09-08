@@ -3,7 +3,6 @@ import 'package:app_thoitiet/apps/home/widget/home_row1.dart';
 import 'package:app_thoitiet/apps/home/widget/home_temperature.dart';
 import 'package:app_thoitiet/apps/home/widget/home_week.dart';
 import 'package:app_thoitiet/apps/home/widget/home_wheather_icon.dart';
-import 'package:app_thoitiet/apps/model/data_wheather.dart';
 import 'package:app_thoitiet/provider/wheather_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,101 +14,134 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      // // extendBody: true,
-      // appBar: AppBar(
-      //   backgroundColor: const Color.fromARGB(255, 54, 146, 220),
-      //   title: const Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: [
-      //       Text(
-      //         'Viet Nam',
-      //         style: TextStyle(color: Colors.white),
-      //       ),
-      //       SizedBox(
-      //         width: 60,
-      //       ),
-      //       Icon(
-      //         Icons.menu,
-      //         color: Colors.white,
-      //         size: 30,
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      body: Container(
-        alignment: Alignment.center,
-        // dùng decoration
-        decoration: const BoxDecoration(
-          // đổ bóng
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xff1d6cf3),
-              Color(0xff19D2FE),
-            ],
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          // Body with gradient background
+          Container(
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xff1d6cf3),
+                  Color(0xff19D2FE),
+                ],
+              ),
+            ),
+            child: () {
+              final provider = context.watch<WheatherProvider>();
+              if (provider.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (provider.error != null || provider.currentWeather == null) {
+                return Center(
+                  child: Text(provider.error ?? 'Không có dữ liệu'),
+                );
+              } else {
+                final data = provider.currentWeather!;
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                          height: 80), // Increased to make room for AppBar
+                      HomeWheatherIcon(nameIcon: data.weather),
+                      HomeRow1(temp: data.main.temp),
+                      HomeLoaction(cityName: data.name),
+                      const SizedBox(height: 30),
+                      HomeTemperature(
+                        wind: data.wind.speed,
+                        humidity: data.main.humidity,
+                        feelsLike: data.main.feelsLike,
+                      ),
+                      const SizedBox(height: 25),
+                      const HomeWeek(),
+                    ],
+                  ),
+                );
+              }
+            }(),
           ),
-        ),
-        // hứng dữ liệu
-        child: FutureBuilder(
-          future: context.read<WheatherProvider>().getWheatherCurrent(),
-          initialData: null,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                //trả về vòng tròn loading
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (!snapshot.hasData) {
-              return Container(
-                child: const Text('no data'),
-              );
-            }
-            DataWheater data = snapshot.data as DataWheater;
-            // print(data.weather[0].main);
-            // print('Thời tiết hiện tại: ${data.weather}');
-            //print('Nhiệt độ hiện tại: ${data.main.temp}°C');
-            final weatherIconName = data.weather;
-            // final temp1 = data.main.temp;
-
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 60,
+          // Positioned AppBar
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AppBar(
+              backgroundColor:
+                  Colors.blue.withOpacity(1), // Make it semi-transparent
+              elevation: 0, // Remove shadow to make it blend more
+              title: const Text(
+                'Weather_app',
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    showSearchDialog();
+                  },
                 ),
-                HomeWheatherIcon(nameIcon: weatherIconName),
-                // ch hiểu lắm
-                HomeRow1(temp: data.main.temp),
-                HomeLoaction(cityName: data.name),
-                const SizedBox(height: 30),
-                HomeTemperature(
-                  wind: data.wind.speed,
-                  humidity: data.main.humidity,
-                  feelsLike: data.main.feelsLike,
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                const HomeWeek(),
               ],
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // hàm
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    context.read<WheatherProvider>().getWheatherCurrent();
+    context.read<WheatherProvider>().start();
+  }
+
+  void showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Tìm Kiếm Theo Thành Phố'),
+          content: TextField(
+            onChanged: (value) {
+              context.read<WheatherProvider>().updateCityName(value);
+            },
+            decoration: const InputDecoration(hintText: 'Nhập tên thành phố'),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Tìm kiếm'),
+              onPressed: () async {
+                await context.read<WheatherProvider>().getWheatherByCity();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

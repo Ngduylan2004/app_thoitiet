@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class day_week extends StatelessWidget {
-  const day_week({
+class DayWeek extends StatelessWidget {
+  const DayWeek({
     super.key,
   });
 
@@ -60,10 +60,10 @@ class HomeWeek extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                day_week(),
-                day_week(),
-                day_week(),
-                day_week(),
+                DayWeek(),
+                DayWeek(),
+                DayWeek(),
+                DayWeek(),
               ],
             )),
       ],
